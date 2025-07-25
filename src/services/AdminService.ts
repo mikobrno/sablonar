@@ -95,9 +95,8 @@ class AdminService {
 
 <p>Děkuji za pozornost a spolupráci.</p>
 
-<p>S pozdravem,<br>
-Správa {{nazev_svj}}</p>`,
-        variables: ['osloveni_obecne', 'osloveni_clenu', 'zkraceny_nazev', 'plny_nazev', 'nazev_svj'],
+<p>{{osloveni_vyboru}}</p>`,
+        variables: ['osloveni_obecne', 'osloveni_clenu', 'zkraceny_nazev', 'plny_nazev', 'nazev_svj', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -123,9 +122,8 @@ Správa {{nazev_svj}}</p>`,
 
 <p>Případné dotazy směřujte na tento e-mail nebo telefonicky.</p>
 
-<p>S pozdravem,<br>
-Správa {{nazev_svj}}</p>`,
-        variables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'nazev_svj'],
+<p>{{osloveni_vyboru}}</p>`,
+        variables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'nazev_svj', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -157,9 +155,8 @@ Správa {{nazev_svj}}</p>`,
 
 <p>Těším se na Vaši účast.</p>
 
-<p>S pozdravem,<br>
-Předseda {{nazev_svj}}</p>`,
-        variables: ['osloveni_obecne', 'osloveni_clenu', 'nazev_svj', 'plny_nazev'],
+<p>{{osloveni_vyboru}}</p>`,
+        variables: ['osloveni_obecne', 'osloveni_clenu', 'nazev_svj', 'plny_nazev', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -173,6 +170,15 @@ Předseda {{nazev_svj}}</p>`,
     const sampleVariables: CustomVariable[] = [
       {
         id: 'var_001',
+        name: 'osloveni_vyboru',
+        value: 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz',
+        type: 'text', 
+        description: 'Standardní oslovení výboru',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'var_002',
         name: 'nazev_spolecnosti',
         value: 'Správa nemovitostí s.r.o.',
         type: 'text',
@@ -181,7 +187,7 @@ Předseda {{nazev_svj}}</p>`,
         updatedAt: new Date()
       },
       {
-        id: 'var_002',
+        id: 'var_003',
         name: 'kontaktni_telefon',
         value: '+420 123 456 789',
         type: 'text',
@@ -190,7 +196,7 @@ Předseda {{nazev_svj}}</p>`,
         updatedAt: new Date()
       },
       {
-        id: 'var_003',
+        id: 'var_004',
         name: 'email_podpora',
         value: 'podpora@sprava-nemovitosti.cz',
         type: 'text',

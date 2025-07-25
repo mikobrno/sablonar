@@ -74,7 +74,7 @@ class TemplateService {
     const sampleStaticVariables: StaticVariable[] = [
       {
         id: 'var_001',
-        name: 'podpis_spravce',
+        name: 'osloveni_vyboru',
         value: 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz',
         description: 'Standardní podpis správce',
         createdAt: new Date(),
@@ -135,8 +135,8 @@ class TemplateService {
 
 <p>Děkuji za pozornost a spolupráci.</p>
 
-<p>{{podpis_spravce}}</p>`,
-        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'kontaktni_email', 'telefon', 'podpis_spravce'],
+<p>{{osloveni_vyboru}}</p>`,
+        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'kontaktni_email', 'telefon', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -168,8 +168,8 @@ class TemplateService {
 
 <p>Těším se na Vaši účast.</p>
 
-<p>{{podpis_spravce}}</p>`,
-        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'nazev_svj', 'zkraceny_nazev', 'adresa', 'podpis_spravce'],
+<p>{{osloveni_vyboru}}</p>`,
+        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'nazev_svj', 'zkraceny_nazev', 'adresa', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -202,8 +202,8 @@ class TemplateService {
 
 <p>Případné dotazy směřujte na {{kontaktni_email}} nebo telefonicky na {{telefon}}.</p>
 
-<p>{{podpis_spravce}}</p>`,
-        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'ico', 'aktualni_datum', 'kontaktni_email', 'telefon', 'podpis_spravce'],
+<p>{{osloveni_vyboru}}</p>`,
+        usedVariables: ['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'ico', 'aktualni_datum', 'kontaktni_email', 'telefon', 'osloveni_vyboru'],
         createdAt: new Date(),
         updatedAt: new Date()
       }
