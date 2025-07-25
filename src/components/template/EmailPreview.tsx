@@ -1,7 +1,7 @@
 import React from 'react';
-// Ujistěte se, že typ GeneratedEmail obsahuje i pole 'generatedAt'
 import type { GeneratedEmail } from '../../types/template'; 
-import { Mail, Calendar, Building2, FileText, Download, Send } from 'lucide-react';
+import { Mail, Calendar, Building2, FileText, Download, Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { webhookService, type EmailData } from '../../services/WebhookService';
 
 interface EmailPreviewProps {
   generatedEmail: GeneratedEmail | null;
@@ -16,10 +16,25 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
   onGenerate,
   canGenerate = false
 }) => {
+  const [isSendingToGmail, setIsSendingToGmail] = React.useState(false);
+  const [gmailStatus, setGmailStatus] = React.useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
+  // Clear status after 5 seconds
+  React.useEffect(() => {
+    if (gmailStatus.type) {
+      const timer = setTimeout(() => {
+        setGmailStatus({ type: null, message: '' });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [gmailStatus]);
+
   const handleExport = () => {
     if (!generatedEmail) return;
     
-    // Použijeme replaceAll pro případ, že by tagy byly vnořené
     const emailContent = `Předmět: ${generatedEmail.subject}\n\nTělo e-mailu:\n${generatedEmail.body.replaceAll(/<[^>]*>/g, '')}`;
     const blob = new Blob([emailContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -32,6 +47,44 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  const handleSendToGmail = async () => {
+    if (!generatedEmail) return;
+
+    setIsSendingToGmail(true);
+    setGmailStatus({ type: null, message: '' });
+
+    try {
+      const emailData: EmailData = {
+        subject: generatedEmail.subject,
+        body: generatedEmail.body,
+        buildingName: generatedEmail.buildingName,
+        templateName: generatedEmail.templateName,
+        generatedAt: generatedEmail.generatedAt ? new Date(generatedEmail.generatedAt).toISOString() : undefined
+      };
+
+      const result = await webhookService.sendToGmail(emailData);
+
+      if (result.success) {
+        setGmailStatus({
+          type: 'success',
+          message: result.message
+        });
+      } else {
+        setGmailStatus({
+          type: 'error',
+          message: result.message
+        });
+      }
+    } catch (error) {
+      setGmailStatus({
+        type: 'error',
+        message: 'Neočekávaná chyba při odesílání do Gmailu'
+      });
+      console.error('Error sending to Gmail:', error);
+    } finally {
+      setIsSendingToGmail(false);
+    }
+  };
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -66,6 +119,21 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
         )}
       </div>
 
+      {/* Gmail Status Messages */}
+      {gmailStatus.type && (
+        <div className={`mb-6 p-4 rounded-lg border flex items-center gap-3 ${
+          gmailStatus.type === 'success' 
+            ? 'bg-green-50 border-green-200 text-green-800' 
+            : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          {gmailStatus.type === 'success' ? (
+            <CheckCircle className="w-5 h-5 text-green-600" />
+          ) : (
+            <AlertCircle className="w-5 h-5 text-red-600" />
+          )}
+          <span className="font-medium">{gmailStatus.message}</span>
+        </div>
+      )}
       {!generatedEmail && !isGenerating ? (
         <div className="text-center py-16">
           <div className="bg-gradient-to-br from-pink-100 to-rose-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -89,7 +157,7 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
           <h4 className="text-xl font-semibold text-gray-800 mb-2">Generuji e-mail...</h4>
           <p className="text-gray-600">Zpracovávám šablonu a nahrazuji proměnné</p>
         </div>
-      ) : generatedEmail && ( // Přidána kontrola, zda generatedEmail opravdu existuje
+      ) : generatedEmail && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl border border-pink-200">
             <div className="flex items-center gap-3">
@@ -111,7 +179,6 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
               <div>
                 <div className="text-sm font-medium text-pink-700">Vygenerováno</div>
                 <div className="text-pink-900 font-semibold">
-                  {/* OPRAVENO: Přidána kontrola, zda 'generatedAt' existuje */}
                   {generatedEmail.generatedAt 
                     ? new Date(generatedEmail.generatedAt).toLocaleString('cs-CZ') 
                     : 'Právě teď'}
@@ -139,7 +206,7 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
               />
             </div>
 
-            <div className="p-4 flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <div className="p-4 flex justify-end gap-3 pt-4 border-t border-gray-200 bg-gray-50">
               <button
                 onClick={handleExport}
                 className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors flex items-center gap-2"
@@ -147,9 +214,22 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({
                 <Download className="w-4 h-4" />
                 Exportovat
               </button>
-              <button className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 font-semibold transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
-                <Send className="w-4 h-4" />
-                Odeslat e-mail
+              <button 
+                onClick={handleSendToGmail}
+                disabled={isSendingToGmail}
+                className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed font-semibold transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+              >
+                {isSendingToGmail ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Odesílám do Gmailu...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Odeslat koncept do Gmailu
+                  </>
+                )}
               </button>
             </div>
           </div>

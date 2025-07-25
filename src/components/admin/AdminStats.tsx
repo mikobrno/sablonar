@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Building2, Variable, Mail, BarChart3, TrendingUp, Calendar } from 'lucide-react'
 import { supabaseService } from '../../services/SupabaseService'
+import { webhookService } from '../../services/WebhookService'
 
 export const AdminStats: React.FC = () => {
   const [stats, setStats] = useState({
@@ -11,9 +12,19 @@ export const AdminStats: React.FC = () => {
     emails: 0
   })
   const [loading, setLoading] = useState(true)
+  const [webhookStatus, setWebhookStatus] = useState<{
+    isConnected: boolean;
+    message: string;
+    testing: boolean;
+  }>({
+    isConnected: false,
+    message: 'Netestováno',
+    testing: false
+  })
 
   useEffect(() => {
     loadStats()
+    testWebhookConnection()
   }, [])
 
   const loadStats = async () => {
@@ -39,6 +50,24 @@ export const AdminStats: React.FC = () => {
     }
   }
 
+  const testWebhookConnection = async () => {
+    setWebhookStatus(prev => ({ ...prev, testing: true }))
+    
+    try {
+      const result = await webhookService.testConnection()
+      setWebhookStatus({
+        isConnected: result.success,
+        message: result.message,
+        testing: false
+      })
+    } catch (error) {
+      setWebhookStatus({
+        isConnected: false,
+        message: 'Chyba při testování připojení',
+        testing: false
+      })
+    }
+  }
   const statItems = [
     {
       name: 'Budovy',
@@ -120,6 +149,42 @@ export const AdminStats: React.FC = () => {
         </div>
       </div>
 
+      {/* Webhook Status */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="p-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Mail className="w-5 h-5" />
+              <h4 className="font-bold text-lg">Gmail Integrace (n8n)</h4>
+            </div>
+            <button
+              onClick={testWebhookConnection}
+              disabled={webhookStatus.testing}
+              className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              {webhookStatus.testing ? 'Testuji...' : 'Test připojení'}
+            </button>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${
+                webhookStatus.isConnected ? 'bg-green-500' : 'bg-red-500'
+              }`}></div>
+              <span className="font-medium text-gray-900">
+                Webhook Status: {webhookStatus.isConnected ? 'Připojeno' : 'Nepřipojeno'}
+              </span>
+            </div>
+            <div className="text-sm text-gray-600">
+              URL: {webhookService.getWebhookUrl()}
+            </div>
+          </div>
+          <div className="mt-2 text-sm text-gray-600">
+            {webhookStatus.message}
+          </div>
+        </div>
+      </div>
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div className="p-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
           <div className="flex items-center gap-3">

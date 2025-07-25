@@ -160,6 +160,8 @@ Pro podporu a dotazy:
 - ✨ **NOVÉ**: Kompletní správa dynamických proměnných
 - ✨ **NOVÉ**: Pokročilá validace a kontrola duplicit
 - ✨ **NOVÉ**: Vylepšené vyhledávání a filtrování
+- ✨ **NOVÉ**: Gmail integrace přes n8n webhook
+- ✨ **NOVÉ**: Automatické odesílání konceptů do Gmailu
 - 🔧 **VYLEPŠENO**: Administrační rozhraní s lepší navigací
 - 🔧 **VYLEPŠENO**: Error handling a user feedback
 - 🐛 **OPRAVENO**: Různé drobné chyby v UI
