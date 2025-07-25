@@ -3,11 +3,12 @@ import { Settings, Sparkles } from 'lucide-react';
 import { AdminNavigation } from './AdminNavigation';
 import { BuildingManager } from './BuildingManager';
 import { VariableManager } from './VariableManager';
+import { DynamicVariableManager } from './DynamicVariableManager';
 import { TemplateManager } from './TemplateManager';
 import { EmailHistory } from './EmailHistory';
 import { AdminStats } from './AdminStats';
 
-type AdminTab = 'buildings' | 'variables' | 'templates' | 'emails' | 'stats';
+type AdminTab = 'buildings' | 'variables' | 'dynamic-variables' | 'templates' | 'emails' | 'stats';
 
 export const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('buildings');
@@ -18,6 +19,8 @@ export const AdminDashboard: React.FC = () => {
         return <BuildingManager />;
       case 'variables':
         return <VariableManager />;
+      case 'dynamic-variables':
+        return <DynamicVariableManager />;
       case 'templates':
         return <TemplateManager />;
       case 'emails':

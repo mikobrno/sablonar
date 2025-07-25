@@ -1,5 +1,5 @@
 import React from 'react'
-import { Building2, Variable, Mail, BarChart3, Database, Settings } from 'lucide-react'
+import { Building2, Variable, Mail, BarChart3, Database, Settings, Sliders } from 'lucide-react'
 
 interface AdminNavigationProps {
   activeTab: string
@@ -9,7 +9,8 @@ interface AdminNavigationProps {
 export const AdminNavigation: React.FC<AdminNavigationProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'buildings', name: 'Budovy', icon: Building2, color: 'from-blue-500 to-indigo-600' },
-    { id: 'variables', name: 'Proměnné', icon: Variable, color: 'from-purple-500 to-violet-600' },
+    { id: 'variables', name: 'Statické proměnné', icon: Variable, color: 'from-purple-500 to-violet-600' },
+    { id: 'dynamic-variables', name: 'Dynamické proměnné', icon: Sliders, color: 'from-indigo-500 to-purple-600' },
     { id: 'templates', name: 'Šablony', icon: Mail, color: 'from-orange-500 to-amber-600' },
     { id: 'emails', name: 'Vygenerované e-maily', icon: Database, color: 'from-green-500 to-emerald-600' },
     { id: 'stats', name: 'Statistiky', icon: BarChart3, color: 'from-pink-500 to-rose-600' },
@@ -55,7 +56,8 @@ export const AdminNavigation: React.FC<AdminNavigationProps> = ({ activeTab, onT
                       : 'text-gray-500'
                   }`}>
                     {tab.id === 'buildings' && 'Správa nemovitostí'}
-                    {tab.id === 'variables' && 'Statické proměnné'}
+                    {tab.id === 'variables' && 'Globální konstanty'}
+                    {tab.id === 'dynamic-variables' && 'Uživatelské proměnné'}
                     {tab.id === 'templates' && 'E-mailové šablony'}
                     {tab.id === 'emails' && 'Historie e-mailů'}
                     {tab.id === 'stats' && 'Přehled systému'}

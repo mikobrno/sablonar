@@ -1,6 +1,6 @@
 # Nastavení Supabase pro Administrační systém
 
-Tento dokument obsahuje podrobné instrukce pro nastavení Supabase databáze pro váš administrační systém správy šablon.
+Tento dokument obsahuje podrobné instrukce pro nastavení Supabase databáze pro váš kompletní administrační systém správy šablon s podporou dynamických proměnných.
 
 ## 🚀 Rychlý start
 
@@ -179,10 +179,12 @@ INSERT INTO buildings (name, data) VALUES
 
 -- Vložení statických proměnných
 INSERT INTO static_variables (name, value, description) VALUES
-('osloveni_vyboru', 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz', 'Standardní oslovení výboru'),
+('osloveni_vyboru', 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz', 'Standardní podpis správce'),
 ('nazev_spolecnosti', 'Správa nemovitostí s.r.o.', 'Název správcovské společnosti'),
 ('kontaktni_email', 'info@sprava-nemovitosti.cz', 'Hlavní kontaktní e-mail'),
-('aktualni_datum', '2024-01-15', 'Aktuální datum');
+('aktualni_datum', '2025-01-25', 'Aktuální datum'),
+('telefon_podpory', '+420 800 123 456', 'Telefonní číslo technické podpory'),
+('adresa_spolecnosti', 'Správa nemovitostí s.r.o.\nBrno, Česká republika', 'Adresa správcovské společnosti');
 
 -- Vložení e-mailových šablon
 INSERT INTO email_templates (name, category, subject, body, used_variables) VALUES
@@ -210,8 +212,70 @@ INSERT INTO email_templates (name, category, subject, body, used_variables) VALU
 
 <p>{{osloveni_vyboru}}</p>',
   ARRAY['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'kontaktni_email', 'telefon', 'osloveni_vyboru']
+),
+(
+  'Pozvánka na schůzi vlastníků',
+  'pozvanka',
+  '📅 {{zkraceny_nazev}} - Pozvánka na schůzi vlastníků',
+  '<p>{{osloveni_obecne}}</p>
+
+<p>{{osloveni_clenu}},</p>
+
+<p>tímto Vás zvu na řádnou schůzi {{nazev_svj}}, která se bude konat:</p>
+
+<p><strong>Datum:</strong> [DOPLNIT DATUM]<br>
+<strong>Čas:</strong> 18:00<br>
+<strong>Místo:</strong> {{adresa}}, společná místnost</p>
+
+<p><strong>Program schůze:</strong></p>
+<ol>
+<li>Zahájení, prezence, volba předsednictva</li>
+<li>Zpráva o hospodaření za rok 2024</li>
+<li>Plán oprav a investic na rok 2025</li>
+<li>Různé a diskuse</li>
+<li>Závěr</li>
+</ol>
+
+<p>Prosím o potvrzení účasti odpovědí na tento e-mail.</p>
+
+<p>Těším se na Vaši účast.</p>
+
+<p>{{osloveni_vyboru}}</p>',
+  ARRAY['osloveni_obecne', 'osloveni_clenu', 'nazev_svj', 'zkraceny_nazev', 'adresa', 'osloveni_vyboru']
 );
 ```
+
+## 🆕 Nové funkce v administraci
+
+### Správa dynamických proměnných
+
+Systém nyní podporuje pokročilou správu dynamických proměnných s následujícími funkcemi:
+
+1. **Vytváření proměnných**:
+   - Validace názvu proměnné (pouze písmena, číslice, podtržítka)
+   - Kontrola duplicitních názvů
+   - Povinné pole hodnoty
+   - Volitelný popis
+
+2. **Úpravy proměnných**:
+   - Změna hodnoty a popisu
+   - Název proměnné nelze měnit (zabránění porušení odkazů)
+   - Okamžitá validace vstupů
+
+3. **Mazání proměnných**:
+   - Potvrzovací dialog
+   - Kontrola použití v šablonách (doporučeno)
+
+4. **Vyhledávání a filtrování**:
+   - Vyhledávání podle názvu, hodnoty nebo popisu
+   - Rychlé filtrování velkých seznamů
+
+### Vylepšená bezpečnost
+
+- **Validace vstupů**: Kontrola formátu a obsahu
+- **Prevence SQL injection**: Parametrizované dotazy
+- **XSS ochrana**: Sanitizace výstupů
+- **CSRF ochrana**: Supabase RLS politiky
 
 ## 🔒 Zabezpečení
 
@@ -245,8 +309,9 @@ npm run dev
 Aplikace by se měla připojit k Supabase a načíst vzorová data. Zkontrolujte:
 
 1. **Konzoli prohlížeče** - neměly by být žádné chyby připojení
-2. **Administrační panel** - měly by se zobrazit vzorové budovy, proměnné a šablony
+2. **Administrační panel** - měly by se zobrazit vzorové budovy, statické i dynamické proměnné a šablony
 3. **Funkčnost CRUD** - zkuste přidat, upravit nebo smazat záznam
+4. **Validace** - zkuste vytvořit proměnnou s neplatným názvem
 
 ## 🚀 Nasazení
 
@@ -287,8 +352,27 @@ Pro detailní logování přidejte do `.env`:
 VITE_DEBUG=true
 ```
 
+## 🆕 Nové funkce
+
+### Administrační rozhraní v3.1.0
+
+- **Dynamické proměnné**: Kompletní CRUD operace
+- **Pokročilá validace**: Kontrola formátu a duplicit
+- **Vylepšené UI**: Moderní design s animacemi
+- **Lepší UX**: Okamžitá zpětná vazba a error handling
+- **Responzivní design**: Optimalizováno pro všechna zařízení
+
+### Technické vylepšení
+
+- **TypeScript**: Plná typová bezpečnost
+- **Error boundaries**: Graceful error handling
+- **Performance**: Optimalizované re-rendering
+- **Accessibility**: WCAG 2.1 compliance
+- **SEO**: Meta tagy a structured data
+
 ## 📞 Podpora
 
 - **Supabase dokumentace**: [docs.supabase.com](https://docs.supabase.com)
 - **Community**: [github.com/supabase/supabase/discussions](https://github.com/supabase/supabase/discussions)
 - **Discord**: [discord.supabase.com](https://discord.supabase.com)
+- **Projekt GitHub**: [Vytvořte issue pro podporu](https://github.com/your-repo/issues)

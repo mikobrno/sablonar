@@ -6,6 +6,7 @@ export const AdminStats: React.FC = () => {
   const [stats, setStats] = useState({
     buildings: 0,
     variables: 0,
+    dynamicVariables: 0,
     templates: 0,
     emails: 0
   })
@@ -27,6 +28,7 @@ export const AdminStats: React.FC = () => {
       setStats({
         buildings: buildings.length,
         variables: variables.length,
+        dynamicVariables: variables.length, // Same as variables for now, but could be different in future
         templates: templates.length,
         emails: emails.length
       })
@@ -47,12 +49,20 @@ export const AdminStats: React.FC = () => {
       textColor: 'text-blue-700'
     },
     {
-      name: 'Statické proměnné',
+      name: 'Globální proměnné',
       value: stats.variables,
       icon: Variable,
       color: 'from-purple-500 to-violet-600',
       bgColor: 'bg-purple-50',
       textColor: 'text-purple-700'
+    },
+    {
+      name: 'Dynamické proměnné',
+      value: stats.dynamicVariables,
+      icon: Variable,
+      color: 'from-indigo-500 to-purple-600',
+      bgColor: 'bg-indigo-50',
+      textColor: 'text-indigo-700'
     },
     {
       name: 'E-mailové šablony',

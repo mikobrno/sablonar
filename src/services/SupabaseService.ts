@@ -252,6 +252,45 @@ export class SupabaseService {
     return variables
   }
 
+  // Validace názvu proměnné
+  validateVariableName(name: string): { isValid: boolean; error?: string } {
+    if (!name.trim()) {
+      return { isValid: false, error: 'Název proměnné je povinný' };
+    }
+    
+    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+      return { 
+        isValid: false, 
+        error: 'Název může obsahovat pouze písmena, číslice a podtržítka, musí začínat písmenem nebo podtržítkem' 
+      };
+    }
+    
+    return { isValid: true };
+  }
+
+  // Kontrola duplicitních názvů proměnných
+  async checkVariableNameExists(name: string, excludeId?: string): Promise<boolean> {
+    try {
+      let query = this.supabase
+        .from('static_variables')
+        .select('id')
+        .eq('name', name);
+      
+      if (excludeId) {
+        query = query.neq('id', excludeId);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      return (data?.length || 0) > 0;
+    } catch (error) {
+      console.error('Chyba při kontrole názvu proměnné:', error);
+      return false;
+    }
+  }
+
   // Získání dostupných proměnných pro budovu
   async getAvailableVariables(buildingId: string): Promise<{
     static: Array<{ name: string; value: string; description?: string }>

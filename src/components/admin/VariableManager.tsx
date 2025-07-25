@@ -100,8 +100,8 @@ export const VariableManager: React.FC = () => {
               <Variable className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">Vlastní proměnné</h3>
-              <p className="text-purple-100 text-sm">Správa globálních hodnot pro šablony</p>
+              <h3 className="text-xl font-bold">Statické proměnné</h3>
+              <p className="text-purple-100 text-sm">Správa globálních konstant pro šablony</p>
             </div>
           </div>
           <button
@@ -121,7 +121,7 @@ export const VariableManager: React.FC = () => {
               <Sparkles className="w-10 h-10 text-white" />
             </div>
             <h4 className="text-xl font-semibold text-gray-800 mb-2">Žádné proměnné</h4>
-            <p className="text-gray-600 mb-6">Zatím nejsou definovány žádné vlastní proměnné</p>
+            <p className="text-gray-600 mb-6">Zatím nejsou definovány žádné statické proměnné</p>
             <button
               onClick={() => setShowAddModal(true)}
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-lg hover:from-purple-700 hover:to-violet-700 font-medium shadow-sm transition-all duration-200"
@@ -226,7 +226,7 @@ const VariableModal: React.FC<VariableModalProps> = ({
             {variable ? 'Upravit proměnnou' : 'Přidat novou proměnnou'}
           </h3>
           <p className="text-purple-100 text-sm mt-1">
-            {variable ? 'Upravte existující proměnnou' : 'Vytvořte novou globální proměnnou'}
+            {variable ? 'Upravte existující statickou proměnnou' : 'Vytvořte novou globální konstantu'}
           </p>
         </div>
 
