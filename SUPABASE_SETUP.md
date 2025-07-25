@@ -179,7 +179,7 @@ INSERT INTO buildings (name, data) VALUES
 
 -- Vložení statických proměnných
 INSERT INTO static_variables (name, value, description) VALUES
-('podpis_spravce', 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz', 'Standardní podpis správce'),
+('osloveni_vyboru', 'S pozdravem,\nJan Novák\nSprávce nemovitostí\nTel: +420 123 456 789\nEmail: spravce@nemovitosti.cz', 'Standardní oslovení výboru'),
 ('nazev_spolecnosti', 'Správa nemovitostí s.r.o.', 'Název správcovské společnosti'),
 ('kontaktni_email', 'info@sprava-nemovitosti.cz', 'Hlavní kontaktní e-mail'),
 ('aktualni_datum', '2024-01-15', 'Aktuální datum');
@@ -208,8 +208,8 @@ INSERT INTO email_templates (name, category, subject, body, used_variables) VALU
 
 <p>Děkuji za pozornost a spolupráci.</p>
 
-<p>{{podpis_spravce}}</p>',
-  ARRAY['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'kontaktni_email', 'telefon', 'podpis_spravce']
+<p>{{osloveni_vyboru}}</p>',
+  ARRAY['osloveni_obecne', 'osloveni_clenu', 'plny_nazev', 'zkraceny_nazev', 'kontaktni_email', 'telefon', 'osloveni_vyboru']
 );
 ```
 
